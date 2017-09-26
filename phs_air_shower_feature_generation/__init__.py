@@ -126,9 +126,13 @@ def extract_features(photon_stream, cluster):
 
 
 def cut_and_extract_features(photon_stream, cluster):
-    cluster = ps.PhotonStreamCluster(photon_stream)
-    cluster = reject_early_or_late_clusters(cluster)
-    return extract_features(photon_stream=photon_stream, cluster=cluster)
+    try:
+        cluster = reject_early_or_late_clusters(cluster)
+        f = extract_features(photon_stream=photon_stream, cluster=cluster)
+        f['extraction'] = 0
+    except e:
+        f['extraction'] = 1
+    return f
 
 
 def extract_from_simulations(path, out_path, mmcs_corsika_path=None):
