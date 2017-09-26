@@ -2,6 +2,7 @@ import photon_stream as ps
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import shutil
 
 PHYSICS_TRIGGER = 4
 
@@ -126,11 +127,12 @@ def extract_features(photon_stream, cluster):
 
 
 def cut_and_extract_features(photon_stream, cluster):
+    f = {}
     try:
         cluster = reject_early_or_late_clusters(cluster)
         f = extract_features(photon_stream=photon_stream, cluster=cluster)
         f['extraction'] = 0
-    except e:
+    except:
         f['extraction'] = 1
     return f
 
@@ -160,11 +162,12 @@ def extract_from_simulations(path, out_path, mmcs_corsika_path=None):
         features.append(f)
 
     passed_trigger = pd.DataFrame(features)
-    passed_trigger.to_msgpack(out_path)
+    passed_trigger.to_msgpack(out_path+'.part')
+    shutil.move(out_path+'.part', out_path)
 
     no_trigger = pd.DataFrame(event_list.thrown_events())
-    no_trigger.to_msgpack(out_path+'.no_trigger')
-
+    no_trigger.to_msgpack(out_path+'.no_trigger.part')
+    shutil.move(out_path+'.no_trigger.part', out_path+'.no_trigger')
 
 
 def extract_from_observation(path, out_path):
@@ -186,7 +189,8 @@ def extract_from_observation(path, out_path):
             features.append(f)
 
     df = pd.DataFrame(features)
-    df.to_msgpack(out_path)
+    df.to_msgpack(out_path+'.part')
+    shutil.move(out_path+'.part', out_path)
 
 
 
