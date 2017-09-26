@@ -137,7 +137,7 @@ def cut_and_extract_features(photon_stream, cluster):
     return f
 
 
-def extract_from_simulations(path, out_path, mmcs_corsika_path=None):
+def extract_from_simulation(path, out_path, mmcs_corsika_path=None):
     event_list = ps.SimulationReader(path, mmcs_corsika_path=mmcs_corsika_path)
     features = []
     for event in event_list:
