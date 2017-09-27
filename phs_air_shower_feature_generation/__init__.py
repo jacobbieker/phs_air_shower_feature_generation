@@ -162,10 +162,12 @@ def extract_from_simulation(path, out_path, mmcs_corsika_path=None):
         features.append(f)
 
     passed_trigger = pd.DataFrame(features)
+    passed_trigger = reduce_to_32_bit(passed_trigger)
     passed_trigger.to_msgpack(out_path+'.part')
     shutil.move(out_path+'.part', out_path)
 
     no_trigger = pd.DataFrame(event_list.thrown_events())
+    no_trigger = reduce_to_32_bit(no_trigger)
     no_trigger.to_msgpack(out_path+'.no_trigger.part')
     shutil.move(out_path+'.no_trigger.part', out_path+'.no_trigger')
 
@@ -189,10 +191,18 @@ def extract_from_observation(path, out_path):
             features.append(f)
 
     df = pd.DataFrame(features)
+    df = reduce_to_32_bit(df)
     df.to_msgpack(out_path+'.part')
     shutil.move(out_path+'.part', out_path)
 
 
+def reduce_to_32_bit(df):
+    for key in df.keys():
+        if df[key].dtype == 'float64':
+            df[key] = df[key].astype(np.float32)
+        if df[key].dtype == 'int64':
+            df[key] = df[key].astype(np.int32)
+    return df
 
 
 """
