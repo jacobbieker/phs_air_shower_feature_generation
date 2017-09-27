@@ -36,7 +36,7 @@ def main():
 
         jobs = []
         for input_path in glob(join(sim_block_dir,'*.phs.jsonl.gz')):
-            feature_path = join(out_dir, basename(input_path).split('.')[0]+'.features.msg')
+            feature_path = join(out_dir, basename(input_path).split('.')[0]+'.ft.msg')
             if not exists(feature_path):
                 jobs.append({'input_path': input_path, 'feature_path': feature_path})
 

@@ -40,7 +40,7 @@ def main():
         jobs = []
         for in_path in glob(join(obs_dir,'*','*','*','*.phs.jsonl.gz')):
             p = fact.path.parse(in_path)
-            out_path = fact.path.tree_path(p['night'], p['run'], out_dir, '.features.msg')
+            out_path = fact.path.tree_path(p['night'], p['run'], out_dir, '.ft.msg')
             if not exists(out_path):
                 jobs.append({'in_path': in_path, 'out_path': out_path})
 
