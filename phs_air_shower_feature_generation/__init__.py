@@ -166,10 +166,10 @@ def extract_from_simulation(path, out_path, mmcs_corsika_path=None):
     passed_trigger.to_msgpack(out_path+'.part')
     shutil.move(out_path+'.part', out_path)
 
-    no_trigger = pd.DataFrame(event_list.thrown_events())
-    no_trigger = reduce_to_32_bit(no_trigger)
-    no_trigger.to_msgpack(out_path+'.no_trigger.part')
-    shutil.move(out_path+'.no_trigger.part', out_path+'.no_trigger')
+    thrown = pd.DataFrame(event_list.thrown_events())
+    thrown = reduce_to_32_bit(thrown)
+    no_trigger.to_msgpack(out_path+'.thrown.part')
+    shutil.move(out_path+'.thrown.part', out_path+'.thrown')
 
 
 def extract_from_observation(path, out_path):
