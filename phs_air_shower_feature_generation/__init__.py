@@ -168,7 +168,7 @@ def extract_from_simulation(path, out_path, mmcs_corsika_path=None):
 
     thrown = pd.DataFrame(event_list.thrown_events())
     thrown = reduce_to_32_bit(thrown)
-    no_trigger.to_msgpack(out_path+'.thrown.part')
+    thrown.to_msgpack(out_path+'.thrown.part')
     shutil.move(out_path+'.thrown.part', out_path+'.thrown')
 
 
