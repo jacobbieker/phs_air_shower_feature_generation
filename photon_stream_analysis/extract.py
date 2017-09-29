@@ -5,6 +5,7 @@ import shutil
 
 from . import features
 from . import reject
+from . import tools
 
 PHYSICS_TRIGGER = 4
 
@@ -81,11 +82,11 @@ def from_simulation(phs_path, mmcs_corsika_path=None):
         f['hight_of_first_interaction'] = event.simulation_truth.air_shower.hight_of_first_interaction
         features.append(f)
 
-    triggered = _reduce_to_32_bit(pd.DataFrame(features))
-    triggered = _reduce_to_32_bit(triggered)
+    triggered = pd.DataFrame(features)
+    triggered = tools.reduce_DataFrame_to_32_bit(triggered)
 
     thrown = pd.DataFrame(event_list.thrown_events())
-    thrown = _reduce_to_32_bit(thrown)
+    thrown = tools.reduce_DataFrame_to_32_bit(thrown)
 
     return triggered, thrown
 
@@ -118,7 +119,7 @@ def from_observation(phs_path):
             features.append(f)
 
     triggered = pd.DataFrame(features)
-    triggered = _reduce_to_32_bit(triggered)
+    triggered = tools.reduce_DataFrame_to_32_bit(triggered)
 
     return triggered
 
@@ -126,12 +127,3 @@ def from_observation(phs_path):
 def write_observation_extraction(triggered, out_path):
     triggered.to_msgpack(out_path+'.part')
     shutil.move(out_path+'.part', out_path)  
-
-
-def _reduce_to_32_bit(df):
-    for key in df.keys():
-        if df[key].dtype == 'float64':
-            df[key] = df[key].astype(np.float32)
-        if df[key].dtype == 'int64':
-            df[key] = df[key].astype(np.int32)
-    return df
