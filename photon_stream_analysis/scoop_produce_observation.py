@@ -12,11 +12,8 @@ import scoop
 from glob import glob
 from os.path import join
 from os.path import exists
-from os.path import basename
 from os.path import dirname
 from os import makedirs
-import shutil
-import tempfile
 import photon_stream as ps
 import fact
 import phs_air_shower_feature_generation as psfg
@@ -24,8 +21,11 @@ import phs_air_shower_feature_generation as psfg
  
 def extract_features(job):
     makedirs(dirname(job['out_path']), exist_ok=True)
-    psfg.extract_from_observation(
-        path=job['in_path'],
+    triggered = psfg.extract.from_observation(
+        phs_path=job['in_path'],
+    )
+    psfg.extract.write_observation_extraction(
+        triggered=triggered, 
         out_path=job['out_path']
     )
     return 1

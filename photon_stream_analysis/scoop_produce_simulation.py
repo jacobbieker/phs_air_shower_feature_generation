@@ -21,9 +21,12 @@ import phs_air_shower_feature_generation as psfg
 
 def extract_features(job): 
     makedirs(dirname(job['feature_path']), exist_ok=True)
-    psfg.extract_from_simulation(
-        path=job['input_path'], 
-        out_path=job['feature_path']
+    triggered, thrown = psfg.extract_from_simulation(
+        phs_path=job['in_path'], 
+    )
+    psfg.write_simulation_extraction(
+        triggered=triggered, thrown=thrown,
+        out_path=job['out_path']
     )
     return 1
 
@@ -35,10 +38,10 @@ def main():
         out_dir = arguments['--out_dir']
 
         jobs = []
-        for input_path in glob(join(sim_block_dir,'*.phs.jsonl.gz')):
-            feature_path = join(out_dir, basename(input_path).split('.')[0]+'.ft.msg')
-            if not exists(feature_path):
-                jobs.append({'input_path': input_path, 'feature_path': feature_path})
+        for in_path in glob(join(sim_block_dir,'*.phs.jsonl.gz')):
+            out_path = join(out_dir, basename(in_path).split('.')[0]+'.ft.msg')
+            if not exists(out_path):
+                jobs.append({'in_path': in_path, 'out_path': out_path})
 
         job_return_codes = list(scoop.futures.map(extract_features, jobs))
 
