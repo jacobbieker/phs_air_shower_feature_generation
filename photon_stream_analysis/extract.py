@@ -56,7 +56,7 @@ def raw_features(photon_stream, cluster):
     return f
 
 
-def from_simulation(phs_path, out_path, mmcs_corsika_path=None):
+def from_simulation(phs_path, mmcs_corsika_path=None):
     event_list = ps.SimulationReader(phs_path, mmcs_corsika_path=mmcs_corsika_path)
     features = []
     for event in event_list:
@@ -81,18 +81,24 @@ def from_simulation(phs_path, out_path, mmcs_corsika_path=None):
         f['hight_of_first_interaction'] = event.simulation_truth.air_shower.hight_of_first_interaction
         features.append(f)
 
-    passed_trigger = pd.DataFrame(features)
-    passed_trigger = _reduce_to_32_bit(passed_trigger)
-    passed_trigger.to_msgpack(out_path+'.part')
-    shutil.move(out_path+'.part', out_path)
+    triggered = _reduce_to_32_bit(pd.DataFrame(features))
+    triggered = _reduce_to_32_bit(triggered)
 
     thrown = pd.DataFrame(event_list.thrown_events())
     thrown = _reduce_to_32_bit(thrown)
+
+    return triggered, thrown
+
+
+def write_simulation_extraction(triggered, thrown, out_path):
+    triggered.to_msgpack(out_path+'.part')
+    shutil.move(out_path+'.part', out_path)
+
     thrown.to_msgpack(out_path+'.thrown.part')
     shutil.move(out_path+'.thrown.part', out_path+'.thrown')
 
 
-def from_observation(phs_path, out_path):
+def from_observation(phs_path):
     event_list = ps.EventListReader(phs_path)
     features = []
     for event in event_list:
@@ -111,10 +117,15 @@ def from_observation(phs_path, out_path):
             f['time'] = event.observation_info._time_unix_s + event.observation_info._time_unix_us/1e6
             features.append(f)
 
-    df = pd.DataFrame(features)
-    df = _reduce_to_32_bit(df)
-    df.to_msgpack(out_path+'.part')
-    shutil.move(out_path+'.part', out_path)
+    triggered = pd.DataFrame(features)
+    triggered = _reduce_to_32_bit(triggered)
+
+    return triggered
+
+
+def write_observation_extraction(triggered, out_path):
+    triggered.to_msgpack(out_path+'.part')
+    shutil.move(out_path+'.part', out_path)  
 
 
 def _reduce_to_32_bit(df):
