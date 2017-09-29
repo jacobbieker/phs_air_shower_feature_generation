@@ -56,8 +56,8 @@ def raw_features(photon_stream, cluster):
     return f
 
 
-def from_simulation(path, out_path, mmcs_corsika_path=None):
-    event_list = ps.SimulationReader(path, mmcs_corsika_path=mmcs_corsika_path)
+def from_simulation(phs_path, out_path, mmcs_corsika_path=None):
+    event_list = ps.SimulationReader(phs_path, mmcs_corsika_path=mmcs_corsika_path)
     features = []
     for event in event_list:
         cluster = ps.PhotonStreamCluster(event.photon_stream)
@@ -92,8 +92,8 @@ def from_simulation(path, out_path, mmcs_corsika_path=None):
     shutil.move(out_path+'.thrown.part', out_path+'.thrown')
 
 
-def from_observation(path, out_path):
-    event_list = ps.EventListReader(path)
+def from_observation(phs_path, out_path):
+    event_list = ps.EventListReader(phs_path)
     features = []
     for event in event_list:
         if event.observation_info.trigger_type == PHYSICS_TRIGGER:
