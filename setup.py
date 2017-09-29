@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(
-    name='phs_air_shower_feature_generation',
+    name='photon_stream_analysis',
     version='0.0.0',
     description='generate air-shower features from the photon-stream',
     url='https://github.com/fact-project/',
@@ -9,10 +9,10 @@ setup(
     author_email='sebmuell@phys.ethz.ch',
     license='GPLv3',
     packages=[
-        'phs_air_shower_feature_generation',
+        'photon_stream_analysis',
     ],
     package_data={
-        'phs_air_shower_feature_generation': [
+        'photon_stream_analysis': [
             'tests/resources/*',
         ]
     },
