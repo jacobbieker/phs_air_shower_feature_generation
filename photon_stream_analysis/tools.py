@@ -26,3 +26,36 @@ def reduce_DataFrame_to_32_bit(df):
         if df[key].dtype == 'int64':
             df[key] = df[key].astype(np.int32)
     return df
+
+
+
+def histogram(wild_card='*thrown', key='energy', bins=10):
+    paths = glob(wild_card)
+    df = pd.read_msgpack(paths[0])
+    df.dropna(inplace=True)
+    counts, bins = np.histogram(df[key], bins=bins)
+    total_bincounts = np.zeros(len(bins)-1)
+
+    for path in paths:
+        df = pd.read_msgpack(path)
+        df.dropna(inplace=True)
+        bincounts = np.histogram(df[key], bins=bins)[0]
+        total_bincounts += bincounts
+    return total_bincounts, bins
+
+
+def histogram2d(wild_card='*thrown', x='energy', y='number_photons', bins=10):
+    paths = glob(wild_card)
+    df = pd.read_msgpack(paths[0])
+    df.dropna(inplace=True)
+    h = np.histogram2d(x=df[x], y=df[y], bins=bins)
+    total_counts = h[0] 
+    bins = h[1]
+    total_counts = 0
+
+    for path in paths:
+        df = pd.read_msgpack(path)
+        df.dropna(inplace=True)
+        bincounts = np.histogram2d(x=df[x], y=df[y], bins=bins)[0]
+        total_counts += bincounts
+    return total_counts, bins
