@@ -24,8 +24,9 @@ def rrr(event):
     evt['raw_phs_gz'] = raw_phsz
     evt['number_photons'] = number_photons
     ellipse = features.extract_ellipse(cluster.xyt[mask])
-    evt['cog_cx_pap'] = d2r(ellipse['center'][0])
-    evt['cog_cy_pap'] = d2r(ellipse['center'][1])
+    evt['cog_cx_pap'] = ellipse['center'][0]
+    evt['cog_cy_pap'] = ellipse['center'][1]
+    evt['cluster'] = cluster
     return evt
 
 
