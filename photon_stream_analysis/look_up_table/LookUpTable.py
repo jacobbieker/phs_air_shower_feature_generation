@@ -66,6 +66,10 @@ class LookUpTable():
         return ps.representations.raw_phs_to_image_sequence(self.raw_phs(index))
 
 
+    def image(self, index):
+        return ps.representations.raw_phs_to_image(self.raw_phs(index))
+
+
     def point_cloud(self, index):
         return ps.representations.raw_phs_to_point_cloud(
             self.raw_phs(index), 
