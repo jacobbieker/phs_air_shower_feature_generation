@@ -48,7 +48,7 @@ def simulation_run(phs_path, out_path, mmcs_corsika_path=None):
         try:
             st = event.simulation_truth
             evt = rrr(event)
-        except Exception, e:
+        except Exception as e:
             print(e)
             print(event)
             with open(join(out_path, 'error.log'), "at") as fout:
