@@ -11,7 +11,7 @@ PHYSICS_TRIGGER = 4
 
 
 def _raw_features(photon_stream, cluster):
-    fov_diameter = 2.0*photon_stream.geometry['fov_radius']
+    fov_diameter = 2.0*ps.GEOMETRY.fov_radius
 
     air_shower_photons = cluster.xyt[cluster.labels >= 0]
     asp = air_shower_photons
@@ -54,6 +54,7 @@ def raw_features(photon_stream, cluster):
         f['extraction'] = 0
     except:
         f['extraction'] = 1
+        raise
     return f
 
 

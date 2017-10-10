@@ -14,7 +14,7 @@ def test_production():
 
     with tempfile.TemporaryDirectory(prefix='psa') as tmp:
         out_path = os.path.join(tmp, 'lut')
-        psa.look_up_table.produce.run2lut(phs_path, out_path)
+        psa.look_up_table.produce.simulation_run(phs_path, out_path)
 
         L = psa.look_up_table.LookUpTable(out_path)
         assert len(L.energy) == 471

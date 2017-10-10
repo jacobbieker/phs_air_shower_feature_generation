@@ -1,4 +1,5 @@
 import numpy as np
+import photon_stream as ps
 
 
 def eigenvectors2rot_matrix(ev0, ev1):
@@ -8,9 +9,9 @@ def eigenvectors2rot_matrix(ev0, ev1):
     return r
 
 
-def extract_leakage(air_shower_photons, edge=0.1):
+def extract_leakage(air_shower_photons, edge_ratio=0.1):
     d = np.linalg.norm(air_shower_photons[:,0:2], axis=1)
-    leaky = d > 0.5*(1.0 - edge)
+    leaky = d > ps.GEOMETRY.fov_radius*(1.0 - edge_ratio)
     return leaky.sum()
 
 def extract_ellipse(air_shower_photons):

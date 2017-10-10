@@ -45,7 +45,16 @@ def simulation_run(phs_path, out_path, mmcs_corsika_path=None):
         files[k[key]].write(head[k[key]][1](value).tobytes())
 
     for event in ps.SimulationReader(phs_path, mmcs_corsika_path=mmcs_corsika_path):
-        st = event.simulation_truth
+        try:
+            st = event.simulation_truth
+            evt = rrr(event)
+        except e:
+            print(e)
+            print(event)
+            with open(join(out_path, 'error.log'), "at") as fout:
+                fout.write(e+'\n')
+                fout.write(event+'\n')
+            continue
 
         write('run', st.run)
         write('event', st.event)
@@ -62,7 +71,7 @@ def simulation_run(phs_path, out_path, mmcs_corsika_path=None):
         write('particle', st.air_shower.particle)
         write('hight_of_first_interaction', st.air_shower.hight_of_first_interaction)
 
-        evt = rrr(event)
+        
         write('number_photons', evt['number_photons'])
         write('cog_cx_pap', evt['cog_cx_pap'])
         write('cog_cy_pap', evt['cog_cy_pap'])
