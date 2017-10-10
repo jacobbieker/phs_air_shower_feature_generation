@@ -30,7 +30,7 @@ def rrr(event):
 
 
 
-def run2lut(phs_path, out_path):
+def simulation_run(phs_path, out_path, mmcs_corsika_path=None):
     os.makedirs(out_path, exist_ok=True)
 
     raw_phs_gzs = []
@@ -44,7 +44,7 @@ def run2lut(phs_path, out_path):
     def write(key, value):
         files[k[key]].write(head[k[key]][1](value).tobytes())
 
-    for event in ps.SimulationReader(phs_path):
+    for event in ps.SimulationReader(phs_path, mmcs_corsika_path=mmcs_corsika_path):
         st = event.simulation_truth
 
         write('run', st.run)
