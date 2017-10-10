@@ -10,6 +10,14 @@ def difference_image_sequence(ims1, ims2):
     return diff_sum/sum12
 
 
+def difference_image(im1, im2):
+    sum1 = (im1**2).sum()
+    sum2 = (im2**2).sum()
+    sum12 = sum1 + sum2
+    diff_sum = ((im1 - im2)**2).sum()    
+    return diff_sum/sum12
+
+
 
 """
 def make_neighborhood_matrix(max_distance=np.deg2rad(0.2)):
