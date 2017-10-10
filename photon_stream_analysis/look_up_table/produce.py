@@ -52,8 +52,8 @@ def simulation_run(phs_path, out_path, mmcs_corsika_path=None):
             print(e)
             print(event)
             with open(join(out_path, 'error.log'), "at") as fout:
-                fout.write(e+'\n')
-                fout.write(event+'\n')
+                fout.write(str(e)+'\n')
+                fout.write(str(event)+'\n')
             continue
 
         write('run', st.run)
