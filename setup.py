@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='photon_stream_analysis',
-    version='0.0.1',
+    version='0.0.2',
     description='generate air-shower features from the photon-stream',
     url='https://github.com/fact-project/',
     author='Sebastian Achim Mueller',
@@ -10,6 +10,7 @@ setup(
     license='GPLv3',
     packages=[
         'photon_stream_analysis',
+        'photon_stream_analysis.look_up_table',
     ],
     package_data={
         'photon_stream_analysis': [
@@ -17,7 +18,7 @@ setup(
         ]
     },
     install_requires=[
-        'photon_stream==0.0.2',
+        'photon_stream==0.0.4',
         'pyfact',
         'pandas',
     ],
