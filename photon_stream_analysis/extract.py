@@ -54,7 +54,6 @@ def raw_features(photon_stream, cluster):
         f['extraction'] = 0
     except:
         f['extraction'] = 1
-        raise
     return f
 
 
