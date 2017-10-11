@@ -6,6 +6,15 @@ from .HomTra import HomTra
 # CAM frame
 
 
+def ceres_azimuth_rad_to_corsika_azimuth_rad(ceres_az_rad):            
+    return ceres_az_rad - 3.0 + 2*np.pi # works well
+    #return ceres_az_rad + np.pi # works not so well
+
+
+def ceres_zenith_rad_to_corsika_zenith_rad(ceres_zd_rad):            
+    return ceres_zd_rad
+
+
 def H_COR2PAP(
     telescope_azimuth_ceres, 
     telescope_zenith_ceres

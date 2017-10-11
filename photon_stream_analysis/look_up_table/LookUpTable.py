@@ -5,6 +5,8 @@ from .structure import head
 from .structure import sorted_keys 
 import photon_stream as ps
 from .gzip_raw_phs import raw_phs_gz_to_raw_phs
+from ..transformations import particle_ray_from_corsika_to_principal_aperture_plane
+from ..transformations import ceres_azimuth_rad_to_corsika_azimuth_rad
 
 
 class LookUpTable():
@@ -30,6 +32,10 @@ class LookUpTable():
                 self._raw_phs_gz.append(fi.read(raw_phs_gz_len))
 
         self.init_sorted_keys()
+
+        # HAX
+        self.phi = np.rad2deg(self.phi) # now it is in rad
+        self.theta = np.rad2deg(self.theta) # now it is in rad
 
     def init_sorted_keys(self):
         for i in range(len(sorted_keys)):
@@ -76,3 +82,18 @@ class LookUpTable():
             cx=ps.GEOMETRY.x_angle,
             cy=ps.GEOMETRY.y_angle
         )
+
+    def pap(self, index):
+        return particle_ray_from_corsika_to_principal_aperture_plane(
+            corsika_impact_x=self.impact_x[index],
+            corsika_impact_y=self.impact_y[index],
+            corsika_phi=self.phi[index],
+            corsika_theta=self.theta[index],
+            telescope_azimuth_ceres=ceres_azimuth_rad_to_corsika_azimuth_rad(self.azimuth[index]), 
+            telescope_zenith_ceres=self.zenith[index],
+        )
+
+
+
+
+
