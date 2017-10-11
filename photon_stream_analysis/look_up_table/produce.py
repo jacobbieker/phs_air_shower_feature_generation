@@ -2,7 +2,6 @@ import os
 import photon_stream as ps
 from os.path import join
 import numpy as np
-d2r = np.deg2rad
 
 from .structure import head
 from .gzip_raw_phs import raw_phs_to_raw_phs_gz
@@ -28,7 +27,6 @@ def rrr(event):
     evt['cog_cy_pap'] = ellipse['center'][1]
     evt['cluster'] = cluster
     return evt
-
 
 
 def simulation_run(phs_path, out_path, mmcs_corsika_path=None):
@@ -61,18 +59,17 @@ def simulation_run(phs_path, out_path, mmcs_corsika_path=None):
         write('event', st.event)
         write('reuse', st.reuse)
 
-        write('azimuth', d2r(event.az))
-        write('zenith', d2r(event.zd))
+        write('azimuth', np.deg2rad(event.az))
+        write('zenith', np.deg2rad(event.zd))
 
         write('energy', st.air_shower.energy)
-        write('theta', d2r(st.air_shower.theta))
-        write('phi', d2r(st.air_shower.phi))
+        write('theta', st.air_shower.theta)
+        write('phi', st.air_shower.phi)
         write('impact_x', st.air_shower.impact_x(st.reuse))
         write('impact_y', st.air_shower.impact_y(st.reuse))
         write('particle', st.air_shower.particle)
         write('hight_of_first_interaction', st.air_shower.hight_of_first_interaction)
 
-        
         write('number_photons', evt['number_photons'])
         write('cog_cx_pap', evt['cog_cx_pap'])
         write('cog_cy_pap', evt['cog_cy_pap'])
