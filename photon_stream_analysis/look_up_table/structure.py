@@ -17,7 +17,7 @@ head = [
     ('phi', np.float16),
     ('impact_x', np.float16),
     ('impact_y', np.float16),
-    ('particle', np.float16),
+    ('particle', np.uint16),
     ('hight_of_first_interaction', np.float16),
 ]
 

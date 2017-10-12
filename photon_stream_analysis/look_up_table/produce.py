@@ -67,7 +67,7 @@ def simulation_run(phs_path, out_path, mmcs_corsika_path=None):
         write('phi', st.air_shower.phi)
         write('impact_x', st.air_shower.impact_x(st.reuse))
         write('impact_y', st.air_shower.impact_y(st.reuse))
-        write('particle', st.air_shower.particle)
+        write('particle', np.uint16(np.round(st.air_shower.particle)))
         write('hight_of_first_interaction', st.air_shower.hight_of_first_interaction)
 
         write('number_photons', evt['number_photons'])
