@@ -3,7 +3,7 @@ import photon_stream as ps
 from .produce import rrr
 from .distance_metric import difference_image
 from .distance_metric import difference_image_sequence
-from ..transformations import particle_ray_from_corsika_to_principal_aperture_plane
+from ..transformations import ray_local_system_to_principal_aperture_plane_system
 
 
 def not_unique(list_of_index_arrays):
@@ -125,13 +125,13 @@ def match(
     # ----------------
     best_match = image_match_candidates[np.argmin(image_diffs)]
 
-    x_pap, y_pap, cx_pap, cy_pap = particle_ray_from_corsika_to_principal_aperture_plane(
-        corsika_impact_x=lut.impact_x[best_match],
-        corsika_impact_y=lut.impact_y[best_match],
-        corsika_phi=lut.source_az[best_match],
-        corsika_theta=lut.source_zd[best_match],
-        telescope_azimuth_ceres=lut.telescope_az[best_match],
-        telescope_zenith_ceres=lut.telescope_zd[best_match],
+    x_pap, y_pap, cx_pap, cy_pap = ray_local_system_to_principal_aperture_plane_system(
+        impact_x=lut.impact_x[best_match],
+        impact_y=lut.impact_y[best_match],
+        source_az=lut.source_az[best_match],
+        source_zd=lut.source_zd[best_match],
+        telescope_az=lut.telescope_az[best_match],
+        telescope_zd=lut.telescope_zd[best_match],
     )
     prop['bim_x_pap'] = x_pap
     prop['bim_y_pap'] = y_pap
@@ -157,13 +157,13 @@ def match(
     prop['number_image_sequence_matches'] = len(image_sequence_match_candidates)
 
     best_match = image_sequence_match_candidates[np.argmin(image_sequence_diffs)]
-    x_pap, y_pap, cx_pap, cy_pap = particle_ray_from_corsika_to_principal_aperture_plane(
-        corsika_impact_x=lut.impact_x[best_match],
-        corsika_impact_y=lut.impact_y[best_match],
-        corsika_phi=lut.source_az[best_match],
-        corsika_theta=lut.source_zd[best_match],
-        telescope_azimuth_ceres=lut.telescope_az[best_match],
-        telescope_zenith_ceres=lut.telescope_zd[best_match],
+    x_pap, y_pap, cx_pap, cy_pap = ray_local_system_to_principal_aperture_plane_system(
+        impact_x=lut.impact_x[best_match],
+        impact_y=lut.impact_y[best_match],
+        source_az=lut.source_az[best_match],
+        source_zd=lut.source_zd[best_match],
+        telescope_az=lut.telescope_az[best_match],
+        telescope_zd=lut.telescope_zd[best_match],
     )
     prop['bims_x_pap'] = x_pap
     prop['bims_y_pap'] = y_pap
@@ -205,13 +205,13 @@ def run_crossvalidation_between_two_lut(lut1, lut2, number_events):
         prop = match(event_features, raw_phs, lut2)
         
         prop['true_energy'] = lut1.energy[index]
-        x_pap, y_pap, cx_pap, cy_pap = particle_ray_from_corsika_to_principal_aperture_plane(
-            corsika_impact_x=lut1.impact_x[index],
-            corsika_impact_y=lut1.impact_y[index],
-            corsika_phi=lut1.source_az[index],
-            corsika_theta=lut1.source_zd[index],
-            telescope_azimuth_ceres=lut1.telescope_az[index], 
-            telescope_zenith_ceres=lut1.telescope_zd[index],
+        x_pap, y_pap, cx_pap, cy_pap = ray_local_system_to_principal_aperture_plane_system(
+            impact_x=lut1.impact_x[index],
+            impact_y=lut1.impact_y[index],
+            source_az=lut1.source_az[index],
+            source_zd=lut1.source_zd[index],
+            telescope_az=lut1.telescope_az[index], 
+            telescope_zd=lut1.telescope_zd[index],
         )
         prop['true_x_pap'] = x_pap
         prop['true_y_pap'] = y_pap

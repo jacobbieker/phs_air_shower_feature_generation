@@ -28,14 +28,14 @@ def corsika_az_zd_to_ceres_az_zd(
 
 
 def H_COR2PAP(
-    telescope_azimuth_ceres, 
-    telescope_zenith_ceres
+    telescope_az, 
+    telescope_zd
 ):
     H = HomTra()
     H.set_rotation_tait_bryan_angles(
         Rx=0,
-        Ry=-telescope_zenith_ceres,
-        Rz=-telescope_azimuth_ceres
+        Ry=-telescope_zd,
+        Rz=-telescope_az
     )
     H.set_translation([0,0,0])
     return H.inverse()
@@ -77,26 +77,26 @@ def ray_xy_plane_intersection(support, direction):
     return intersection
 
 
-def particle_ray_from_corsika_to_principal_aperture_plane(
-    corsika_impact_x,
-    corsika_impact_y,
-    corsika_phi,
-    corsika_theta,
-    telescope_azimuth_ceres, 
-    telescope_zenith_ceres,
+def ray_local_system_to_principal_aperture_plane_system(
+    impact_x,
+    impact_y,
+    source_az,
+    source_zd,
+    telescope_az, 
+    telescope_zd,
 ):
     support, direction = corsica_trajectory_2_ray(
-        impact_x=corsika_impact_x,
-        impact_y=corsika_impact_y,
-        azimuth=corsika_phi,
-        zenith_distance=corsika_theta,
+        impact_x=impact_x,
+        impact_y=impact_y,
+        azimuth=source_az,
+        zenith_distance=source_zd,
     )
 
     direction /= np.linalg.norm(direction)
 
     corsika2pap = H_COR2PAP(
-        telescope_azimuth_ceres=telescope_azimuth_ceres, 
-        telescope_zenith_ceres=telescope_zenith_ceres
+        telescope_az=telescope_az, 
+        telescope_zd=telescope_zd
     )
 
     support_pap, direction_pap = transform_ray(

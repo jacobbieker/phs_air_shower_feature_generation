@@ -5,7 +5,7 @@ from .structure import head
 from .structure import sorted_keys 
 import photon_stream as ps
 from .gzip_raw_phs import raw_phs_gz_to_raw_phs
-from ..transformations import particle_ray_from_corsika_to_principal_aperture_plane
+from ..transformations import ray_local_system_to_principal_aperture_plane_system
 
 
 class LookUpTable():
@@ -80,13 +80,13 @@ class LookUpTable():
         )
 
     def pap(self, index):
-        return particle_ray_from_corsika_to_principal_aperture_plane(
-            corsika_impact_x=self.impact_x[index],
-            corsika_impact_y=self.impact_y[index],
-            corsika_phi=self.source_az[index],
-            corsika_theta=self.source_zd[index],
-            telescope_azimuth_ceres=self.telescope_az[index],
-            telescope_zenith_ceres=self.telescope_zd[index],
+        return ray_local_system_to_principal_aperture_plane_system(
+            impact_x=self.impact_x[index],
+            impact_y=self.impact_y[index],
+            source_az=self.source_az[index],
+            source_zd=self.source_zd[index],
+            telescope_az=self.telescope_az[index],
+            telescope_zd=self.telescope_zd[index],
         )
 
 
