@@ -65,7 +65,7 @@ def simulation_run(phs_path, out_path, mmcs_corsika_path=None):
         write('telescope_zd', np.deg2rad(event.zd)) # w.r.t. MARS-CERES
 
         az_offset_between_magnetic_and_geographic_north = st.air_shower.raw_corsika_event_header[93-1]
-        az_offset_between_corsika_and_ceres = np.pi - az_offset_between_magnetic_and_geographic_north
+        az_offset_between_corsika_and_ceres = - np.pi + az_offset_between_magnetic_and_geographic_north
         
         source_az, source_zd = corsika_az_zd_to_ceres_az_zd(
             source_az_wrt_corsika=st.air_shower.phi,
