@@ -5,3 +5,4 @@ from . import produce
 from . import structure
 from . import distance_metric
 from . import control_plots
+from . import cluster

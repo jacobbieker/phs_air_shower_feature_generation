@@ -4,7 +4,12 @@ from .produce import rrr
 from .distance_metric import difference_image
 from .distance_metric import difference_image_sequence
 from ..transformations import ray_local_system_to_principal_aperture_plane_system
+from .cluster import two_dimensinal_cluster
 
+
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import mpl_toolkits.mplot3d.art3d as art3d
 
 def not_unique(list_of_index_arrays):
     l = len(list_of_index_arrays)
@@ -60,6 +65,32 @@ def match_candidates_based_on_image(
         candidate_image = lut.image(match_candidates[i])
         diffs[i] = difference_image(image, candidate_image)
 
+        """
+        if len(raw_phs) > 1440 + 200:
+            fig = plt.figure()
+            ax = fig.gca(projection='3d')
+            ax.set_title(str(diffs[i]))
+            ps.plot.add_point_cloud_2_ax(
+                point_cloud=ps.representations.raw_phs_to_point_cloud(
+                    raw_phs, 
+                    cx=ps.GEOMETRY.x_angle, 
+                    cy=ps.GEOMETRY.y_angle
+                ), 
+                ax=ax,
+                color='r'
+            ) 
+            ps.plot.add_point_cloud_2_ax(
+                point_cloud=ps.representations.raw_phs_to_point_cloud(
+                    lut.raw_phs(match_candidates[i]), 
+                    cx=ps.GEOMETRY.x_angle, 
+                    cy=ps.GEOMETRY.y_angle
+                ),
+                ax=ax,
+                color='b'
+            )
+            plt.show()
+        """
+
     valid = diffs < max_difference
     return match_candidates[valid], diffs[valid]
 
@@ -80,6 +111,33 @@ def match_candidates_based_on_image_sequence(
             candidate_image_sequence
         )
 
+        """
+        if diffs[i] < max_difference:
+            fig = plt.figure()
+            ax = fig.gca(projection='3d')
+            ax.set_title(str(diffs[i]))
+            ps.plot.add_point_cloud_2_ax(
+                point_cloud=ps.representations.raw_phs_to_point_cloud(
+                    raw_phs, 
+                    cx=ps.GEOMETRY.x_angle, 
+                    cy=ps.GEOMETRY.y_angle
+                ), 
+                ax=ax,
+                color='r'
+            ) 
+            ps.plot.add_point_cloud_2_ax(
+                point_cloud=ps.representations.raw_phs_to_point_cloud(
+                    lut.raw_phs(match_candidates[i]), 
+                    cx=ps.GEOMETRY.x_angle, 
+                    cy=ps.GEOMETRY.y_angle
+                ),
+                ax=ax,
+                color='b'
+            )
+            plt.show()
+        """
+
+
     valid = diffs < max_difference
     return match_candidates[valid], diffs[valid]
 
@@ -90,13 +148,12 @@ def match(
     lut,
     coarse_match_absolute_cog_radius=np.deg2rad(0.2),
     coarse_match_relative_number_photons_radius=0.05,
-    imgae_match_max_difference=0.5,
+    imgae_match_max_difference=0.4,
     imgae_sequence_match_max_difference=0.8,
 ):
     prop = {
         'number_coarse_matches': 0,
         'number_image_matches': 0,
-        'number_image_sequence_matches': 0,
     }
 
     coarse_match_candidates = match_candidates_based_on_coarse_features(
@@ -110,17 +167,37 @@ def match(
         return prop
     prop['number_coarse_matches'] = len(coarse_match_candidates)
 
-    image_match_candidates, image_diffs = match_candidates_based_on_image(
+    ims_candidates, ims_diffs = match_candidates_based_on_image_sequence(
         raw_phs=raw_phs, 
         lut=lut, 
         match_candidates=coarse_match_candidates, 
-        max_difference=imgae_match_max_difference
+        max_difference=imgae_sequence_match_max_difference
     )
 
-    if len(image_match_candidates) == 0:
+    if len(ims_candidates) == 0:
         return prop
-    prop['number_image_matches'] = len(image_match_candidates)
+    prop['number_ims_matches'] = len(ims_candidates)
 
+    cx, cy, x, y = cx_cy_x_y_pap(lut=lut, indicies=ims_candidates)
+
+    cxcy_pap_labels, numebr_cluster = two_dimensinal_cluster(
+        x=cx,
+        y=cy,
+        eps=np.deg2rad(0.25),
+        min_samples=5
+    )
+
+    prop['cx_candidates'] = cx
+    prop['cy_candidates'] = cy
+    prop['cxcy_labels'] = cxcy_pap_labels
+    prop['cxcy_number'] = numebr_cluster
+
+    if numebr_cluster > 0:
+        prop['cx_mean'] = cx[cxcy_pap_labels >= 0].mean()
+        prop['cy_mean'] = cy[cxcy_pap_labels >= 0].mean()
+
+
+    """
     # best image match
     # ----------------
     best_match = image_match_candidates[np.argmin(image_diffs)]
@@ -141,47 +218,14 @@ def match(
     prop['bim_best_match'] = best_match
     prop['bim_gammaness'] = 1 - np.min(image_diffs)
 
-
-    # best image sequence match
-    # -------------------------
-    
-    image_sequence_match_candidates, image_sequence_diffs = match_candidates_based_on_image_sequence(
-        raw_phs=raw_phs, 
-        lut=lut, 
-        match_candidates=image_match_candidates, 
-        max_difference=imgae_sequence_match_max_difference
-    )
-
-    if len(image_sequence_match_candidates) == 0:
-        return prop
-    prop['number_image_sequence_matches'] = len(image_sequence_match_candidates)
-
-    best_match = image_sequence_match_candidates[np.argmin(image_sequence_diffs)]
-    x_pap, y_pap, cx_pap, cy_pap = ray_local_system_to_principal_aperture_plane_system(
-        impact_x=lut.impact_x[best_match],
-        impact_y=lut.impact_y[best_match],
-        source_az=lut.source_az[best_match],
-        source_zd=lut.source_zd[best_match],
-        telescope_az=lut.telescope_az[best_match],
-        telescope_zd=lut.telescope_zd[best_match],
-    )
-    prop['bims_x_pap'] = x_pap
-    prop['bims_y_pap'] = y_pap
-    prop['bims_cx_pap'] = cx_pap
-    prop['bims_cy_pap'] = cy_pap
-    prop['bims_energy'] = lut.energy[best_match]
-    prop['bims_best_match'] = best_match
-    prop['bims_gammaness'] = 1 - np.min(image_diffs)
-
-
    
-    weights = 1.0 - image_sequence_diffs
+    weights = 1.0 - image_diffs
     weights /= weights.sum()
 
-    energies = lut.energy[image_sequence_match_candidates]
+    energies = lut.energy[image_match_candidates]
     prop['weighted_energy'] = np.dot(energies, weights)
     prop['median_energy'] = np.median(energies)
-
+    """
 
     return prop
 
@@ -221,3 +265,28 @@ def run_crossvalidation_between_two_lut(lut1, lut2, number_events):
 
         props.append(prop)
     return props
+
+
+def cx_cy_x_y_pap(lut, indicies):
+    number = len(indicies)
+
+    cx = np.zeros(number)
+    cy = np.zeros(number)
+    x = np.zeros(number)
+    y = np.zeros(number)
+
+    for i, index in enumerate(indicies):
+        x_, y_, cx_, cy_ = ray_local_system_to_principal_aperture_plane_system(
+            impact_x=lut.impact_x[index],
+            impact_y=lut.impact_y[index],
+            source_az=lut.source_az[index],
+            source_zd=lut.source_zd[index],
+            telescope_az=lut.telescope_az[index], 
+            telescope_zd=lut.telescope_zd[index],
+        )
+        cx[i] = cx_
+        cy[i] = cy_
+        x[i] = x_
+        y[i] = y_
+
+    return cx, cy, x, y

@@ -8,10 +8,16 @@ head = [
     ('telescope_az', np.float32),
     ('telescope_zd', np.float32),
 
+    # Air-shower features
     ('number_photons', np.float16),
-    ('cog_cx_pap', np.float16),
-    ('cog_cy_pap', np.float16),
+    ('ellipse_cog_x', np.float16),
+    ('ellipse_cog_y', np.float16),
+    ('ellipse_ev0_x', np.float16),
+    ('ellipse_ev0_y', np.float16),
+    ('ellipse_std0', np.float16),
+    ('ellipse_std1', np.float16),
 
+    # Simulation Truth
     ('energy', np.float16),
     ('source_az', np.float32),
     ('source_zd', np.float32),
@@ -23,6 +29,10 @@ head = [
 
 sorted_keys = [
     ('number_photons', np.float16),
-    ('cog_cx_pap', np.float16),
-    ('cog_cy_pap', np.float16),   
+    ('ellipse_cog_x', np.float16),
+    ('ellipse_cog_y', np.float16),
+    ('ellipse_ev0_x', np.float16),
+    ('ellipse_ev0_y', np.float16),
+    ('ellipse_std0', np.float16),
+    ('ellipse_std1', np.float16),
 ]

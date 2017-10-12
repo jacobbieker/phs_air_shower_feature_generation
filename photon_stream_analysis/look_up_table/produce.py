@@ -23,11 +23,18 @@ def rrr(event):
 
     evt = {}
     evt['raw_phs_gz'] = raw_phsz
+    evt['cluster'] = cluster
+
+    # Air-Shower features
     evt['number_photons'] = number_photons
     ellipse = features.extract_ellipse(cluster.xyt[mask])
-    evt['cog_cx_pap'] = ellipse['center'][0]
-    evt['cog_cy_pap'] = ellipse['center'][1]
-    evt['cluster'] = cluster
+    evt['ellipse_cog_x'] = ellipse['center'][0]
+    evt['ellipse_cog_y'] = ellipse['center'][1]
+    evt['ellipse_ev0_x'] = ellipse['ev0'][0]
+    evt['ellipse_ev0_y'] = ellipse['ev0'][1]
+    evt['ellipse_std0'] = ellipse['std0']
+    evt['ellipse_std1'] = ellipse['std1']
+
     return evt
 
 
@@ -89,9 +96,15 @@ def simulation_run(phs_path, out_path, mmcs_corsika_path=None):
         write('particle', np.uint16(np.round(st.air_shower.particle)))
         write('hight_of_first_interaction', st.air_shower.hight_of_first_interaction)
 
+        # Air-Shower features
         write('number_photons', evt['number_photons'])
-        write('cog_cx_pap', evt['cog_cx_pap'])
-        write('cog_cy_pap', evt['cog_cy_pap'])
+        write('ellipse_cog_x', evt['ellipse_cog_x'])
+        write('ellipse_cog_y', evt['ellipse_cog_y'])
+        write('ellipse_ev0_x', evt['ellipse_ev0_x'])
+        write('ellipse_ev0_y', evt['ellipse_ev0_y'])
+        write('ellipse_std0', evt['ellipse_std0'])
+        write('ellipse_std1', evt['ellipse_std1'])
+
         raw_phs_gzs.append(evt['raw_phs_gz'])
 
     for f in files:
