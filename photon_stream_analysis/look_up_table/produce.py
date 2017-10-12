@@ -6,6 +6,8 @@ import numpy as np
 from .structure import head
 from .gzip_raw_phs import raw_phs_to_raw_phs_gz
 from .. import features
+from ..transformations import corsika_impact_to_ceres_impact
+from ..transformations import corsika_az_zd_to_ceres_az_zd
 
 
 def rrr(event):
@@ -62,20 +64,28 @@ def simulation_run(phs_path, out_path, mmcs_corsika_path=None):
         write('telescope_az', np.deg2rad(event.az)) # w.r.t. MARS-CERES
         write('telescope_zd', np.deg2rad(event.zd)) # w.r.t. MARS-CERES
 
-        azimuth_offset_between_magnetic_and_geographic_north = st.air_shower.raw_corsika_event_header[93-1]
-        source_az_wrt_corsika = st.air_shower.phi
-        source_az = source_az_wrt_corsika - azimuth_offset_between_magnetic_and_geographic_north
-        source_az += np.pi
+        az_offset_between_magnetic_and_geographic_north = st.air_shower.raw_corsika_event_header[93-1]
+        az_offset_between_corsika_and_ceres = np.pi - az_offset_between_magnetic_and_geographic_north
+        
+        source_az, source_zd = corsika_az_zd_to_ceres_az_zd(
+            source_az_wrt_corsika=st.air_shower.phi,
+            source_zd_wrt_corsika=st.air_shower.theta,
+            az_offset_between_corsika_and_ceres=az_offset_between_corsika_and_ceres,
+        )
 
-        source_zd_wrt_corsika = st.air_shower.theta
-        source_zd = source_zd_wrt_corsika
-
-        write('source_zd', source_zd) # w.r.t. MARS-CERES
         write('source_az', source_az) # w.r.t. MARS-CERES
+        write('source_zd', source_zd) # w.r.t. MARS-CERES
+        
+        impact_x, impact_y = corsika_impact_to_ceres_impact(
+            impact_x_wrt_corsika=st.air_shower.impact_x(st.reuse),
+            impact_y_wrt_corsika=st.air_shower.impact_y(st.reuse),
+            az_offset_between_corsika_and_ceres=az_offset_between_corsika_and_ceres,
+        )
+
+        write('impact_x', impact_x)
+        write('impact_y', impact_y)
 
         write('energy', st.air_shower.energy)
-        write('impact_x', st.air_shower.impact_x(st.reuse))
-        write('impact_y', st.air_shower.impact_y(st.reuse))
         write('particle', np.uint16(np.round(st.air_shower.particle)))
         write('hight_of_first_interaction', st.air_shower.hight_of_first_interaction)
 

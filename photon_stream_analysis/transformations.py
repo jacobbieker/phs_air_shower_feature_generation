@@ -2,6 +2,31 @@ import numpy as np
 from .HomTra import HomTra
 
 
+def corsika_impact_to_ceres_impact(
+    impact_x_wrt_corsika,
+    impact_y_wrt_corsika,
+    az_offset_between_corsika_and_ceres,
+):
+    az = az_offset_between_corsika_and_ceres
+    caz = np.cos(az)
+    saz = np.sin(az)
+
+    impact_x_wrt_ceres = caz*impact_x_wrt_corsika - saz*impact_y_wrt_corsika
+    impact_y_wrt_ceres = saz*impact_x_wrt_corsika + caz*impact_y_wrt_corsika
+
+    return impact_x_wrt_ceres, impact_y_wrt_ceres
+
+
+def corsika_az_zd_to_ceres_az_zd(
+    source_az_wrt_corsika,
+    source_zd_wrt_corsika,
+    az_offset_between_corsika_and_ceres,
+):
+    source_az_wrt_ceres = source_az_wrt_corsika + az_offset_between_corsika_and_ceres
+    source_zd_wrt_ceres = source_zd_wrt_corsika
+    return source_az_wrt_ceres, source_zd_wrt_ceres
+
+
 def H_COR2PAP(
     telescope_azimuth_ceres, 
     telescope_zenith_ceres
