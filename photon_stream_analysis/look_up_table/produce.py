@@ -62,14 +62,16 @@ def simulation_run(phs_path, out_path, mmcs_corsika_path=None):
         write('telescope_az', np.deg2rad(event.az)) # w.r.t. MARS-CERES
         write('telescope_zd', np.deg2rad(event.zd)) # w.r.t. MARS-CERES
 
+        azimuth_offset_between_magnetic_and_geographic_north = st.air_shower.raw_corsika_event_header[93-1]
         source_az_wrt_corsika = st.air_shower.phi
-        source_az = source_az_wrt_corsika + st.air_shower.raw_corsika_event_header[93-1]
+        source_az = source_az_wrt_corsika - azimuth_offset_between_magnetic_and_geographic_north
+        source_az += np.pi
 
         source_zd_wrt_corsika = st.air_shower.theta
         source_zd = source_zd_wrt_corsika
 
-        write('source_zd', source_zd)
-        write('source_az', source_az)
+        write('source_zd', source_zd) # w.r.t. MARS-CERES
+        write('source_az', source_az) # w.r.t. MARS-CERES
 
         write('energy', st.air_shower.energy)
         write('impact_x', st.air_shower.impact_x(st.reuse))

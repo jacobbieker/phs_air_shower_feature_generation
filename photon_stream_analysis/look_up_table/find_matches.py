@@ -4,7 +4,7 @@ from .produce import rrr
 from .distance_metric import difference_image
 from .distance_metric import difference_image_sequence
 from ..transformations import particle_ray_from_corsika_to_principal_aperture_plane
-from ..transformations import ceres_azimuth_rad_to_corsika_azimuth_rad
+
 
 def not_unique(list_of_index_arrays):
     l = len(list_of_index_arrays)
@@ -128,10 +128,10 @@ def match(
     x_pap, y_pap, cx_pap, cy_pap = particle_ray_from_corsika_to_principal_aperture_plane(
         corsika_impact_x=lut.impact_x[best_match],
         corsika_impact_y=lut.impact_y[best_match],
-        corsika_phi=lut.phi[best_match],
-        corsika_theta=lut.theta[best_match],
-        telescope_azimuth_ceres=ceres_azimuth_rad_to_corsika_azimuth_rad(lut.azimuth[best_match]),
-        telescope_zenith_ceres=lut.zenith[best_match],
+        corsika_phi=lut.source_az[best_match],
+        corsika_theta=lut.source_zd[best_match],
+        telescope_azimuth_ceres=lut.telescope_az[best_match],
+        telescope_zenith_ceres=lut.telescope_zd[best_match],
     )
     prop['bim_x_pap'] = x_pap
     prop['bim_y_pap'] = y_pap
@@ -160,10 +160,10 @@ def match(
     x_pap, y_pap, cx_pap, cy_pap = particle_ray_from_corsika_to_principal_aperture_plane(
         corsika_impact_x=lut.impact_x[best_match],
         corsika_impact_y=lut.impact_y[best_match],
-        corsika_phi=lut.phi[best_match],
-        corsika_theta=lut.theta[best_match],
-        telescope_azimuth_ceres=ceres_azimuth_rad_to_corsika_azimuth_rad(lut.azimuth[best_match]),
-        telescope_zenith_ceres=lut.zenith[best_match],
+        corsika_phi=lut.source_az[best_match],
+        corsika_theta=lut.source_zd[best_match],
+        telescope_azimuth_ceres=lut.telescope_az[best_match],
+        telescope_zenith_ceres=lut.telescope_zd[best_match],
     )
     prop['bims_x_pap'] = x_pap
     prop['bims_y_pap'] = y_pap
@@ -181,29 +181,6 @@ def match(
     energies = lut.energy[image_sequence_match_candidates]
     prop['weighted_energy'] = np.dot(energies, weights)
     prop['median_energy'] = np.median(energies)
-    
-    """
-    impact_xs = np.median(lut.impact_x[image_sequence_match_candidates])
-    impact_ys = np.median(lut.impact_y[image_sequence_match_candidates])
-    phis = np.median(lut.phi[image_sequence_match_candidates])
-    thetas = np.median(lut.theta[image_sequence_match_candidates])
-    azimuths = np.median(lut.azimuth[image_sequence_match_candidates])
-    zeniths = np.median(lut.zenith[image_sequence_match_candidates])
-
-
-    x_pap, y_pap, cx_pap, cy_pap = particle_ray_from_corsika_to_principal_aperture_plane(
-        corsika_impact_x=impact_xs,
-        corsika_impact_y=impact_ys,
-        corsika_phi=phis,
-        corsika_theta=thetas,
-        telescope_azimuth_ceres=azimuths, 
-        telescope_zenith_ceres=zeniths,
-    )
-    prop['x_pap'] = x_pap
-    prop['y_pap'] = y_pap
-    prop['cx_pap'] = cx_pap
-    prop['cy_pap'] = cy_pap
-    """
 
 
     return prop
@@ -231,10 +208,10 @@ def run_crossvalidation_between_two_lut(lut1, lut2, number_events):
         x_pap, y_pap, cx_pap, cy_pap = particle_ray_from_corsika_to_principal_aperture_plane(
             corsika_impact_x=lut1.impact_x[index],
             corsika_impact_y=lut1.impact_y[index],
-            corsika_phi=lut1.phi[index],
-            corsika_theta=lut1.theta[index],
-            telescope_azimuth_ceres=ceres_azimuth_rad_to_corsika_azimuth_rad(lut1.azimuth[index]), 
-            telescope_zenith_ceres=lut1.zenith[index],
+            corsika_phi=lut1.source_az[index],
+            corsika_theta=lut1.source_zd[index],
+            telescope_azimuth_ceres=lut1.telescope_az[index], 
+            telescope_zenith_ceres=lut1.telescope_zd[index],
         )
         prop['true_x_pap'] = x_pap
         prop['true_y_pap'] = y_pap

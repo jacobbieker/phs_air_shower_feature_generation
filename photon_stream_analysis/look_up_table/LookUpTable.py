@@ -6,7 +6,6 @@ from .structure import sorted_keys
 import photon_stream as ps
 from .gzip_raw_phs import raw_phs_gz_to_raw_phs
 from ..transformations import particle_ray_from_corsika_to_principal_aperture_plane
-from ..transformations import ceres_azimuth_rad_to_corsika_azimuth_rad
 
 
 class LookUpTable():
@@ -84,10 +83,10 @@ class LookUpTable():
         return particle_ray_from_corsika_to_principal_aperture_plane(
             corsika_impact_x=self.impact_x[index],
             corsika_impact_y=self.impact_y[index],
-            corsika_phi=self.phi[index],
-            corsika_theta=self.theta[index],
-            telescope_azimuth_ceres=ceres_azimuth_rad_to_corsika_azimuth_rad(self.azimuth[index]), 
-            telescope_zenith_ceres=self.zenith[index],
+            corsika_phi=self.source_az[index],
+            corsika_theta=self.source_zd[index],
+            telescope_azimuth_ceres=self.telescope_az[index],
+            telescope_zenith_ceres=self.telescope_zd[index],
         )
 
 
