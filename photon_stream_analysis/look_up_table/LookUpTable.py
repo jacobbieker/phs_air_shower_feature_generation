@@ -33,9 +33,6 @@ class LookUpTable():
 
         self.init_sorted_keys()
 
-        # HAX
-        self.phi = np.rad2deg(self.phi) # now it is in rad
-        self.theta = np.rad2deg(self.theta) # now it is in rad
 
     def init_sorted_keys(self):
         for i in range(len(sorted_keys)):

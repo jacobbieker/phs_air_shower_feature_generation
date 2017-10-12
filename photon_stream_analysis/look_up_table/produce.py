@@ -59,12 +59,19 @@ def simulation_run(phs_path, out_path, mmcs_corsika_path=None):
         write('event', st.event)
         write('reuse', st.reuse)
 
-        write('azimuth', np.deg2rad(event.az))
-        write('zenith', np.deg2rad(event.zd))
+        write('telescope_az', np.deg2rad(event.az)) # w.r.t. MARS-CERES
+        write('telescope_zd', np.deg2rad(event.zd)) # w.r.t. MARS-CERES
+
+        source_az_wrt_corsika = st.air_shower.phi
+        source_az = source_az_wrt_corsika + st.air_shower.raw_corsika_event_header[93-1]
+
+        source_zd_wrt_corsika = st.air_shower.theta
+        source_zd = source_zd_wrt_corsika
+
+        write('source_zd', source_zd)
+        write('source_az', source_az)
 
         write('energy', st.air_shower.energy)
-        write('theta', st.air_shower.theta)
-        write('phi', st.air_shower.phi)
         write('impact_x', st.air_shower.impact_x(st.reuse))
         write('impact_y', st.air_shower.impact_y(st.reuse))
         write('particle', np.uint16(np.round(st.air_shower.particle)))
