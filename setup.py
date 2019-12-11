@@ -18,7 +18,7 @@ setup(
         ]
     },
     install_requires=[
-        'photon_stream==0.0.4',
+        'photon_stream',
         'pyfact',
         'pandas',
     ],
